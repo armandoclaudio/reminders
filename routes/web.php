@@ -11,6 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Auth::routes();
+
+Route::middleware('auth')->group(function() {
+    Route::get('/reminders', 'RemindersController@index')->name('reminders.index');
+    Route::post('/reminders', 'RemindersController@store')->name('reminders.store');
 });
