@@ -11,7 +11,7 @@ class RemindersController extends Controller
     public function index()
     {
         return view('reminders.index', [
-            'reminders' => request()->user()->reminders,
+            'reminders' => request()->user()->reminders()->where('due_at', '>=', Carbon::now())->get(),
         ]);
     }
 
@@ -29,5 +29,14 @@ class RemindersController extends Controller
                 'due_at' => Carbon::parse($request->date . " " . $request->time),
             ])
         );
+    }
+
+    public function destroy(Reminder $reminder)
+    {
+        if($reminder->user_id != request()->user()->id) {
+            return 403;
+        }
+
+        $reminder->delete();
     }
 }
