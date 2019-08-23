@@ -15,8 +15,9 @@ class RemindersTest extends TestCase
     /** @test */
     public function a_guest_cannot_create_reminders()
     {
-        $this->post(route('reminders.store'))
-            ->assertRedirect(route('login'));
+        $this->post(route('reminders.store'),
+            factory('App\Reminder')->make()->toArray()
+        )->assertRedirect();
     }
 
     /** @test */

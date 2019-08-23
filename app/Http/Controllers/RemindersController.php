@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Reminder;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class RemindersController extends Controller
                 'due_at' => Carbon::parse($request->date . " " . $request->time),
             ])
         );
+
+        return redirect()->back();
     }
 
     public function destroy(Reminder $reminder)
@@ -38,5 +41,7 @@ class RemindersController extends Controller
         }
 
         $reminder->delete();
+
+        return redirect()->back();
     }
 }

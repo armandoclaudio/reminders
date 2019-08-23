@@ -11,10 +11,9 @@
 |
 */
 
-Route::middleware('auth')->group(function() {
-    Route::get('/reminders', 'RemindersController@index')->name('reminders.index');
-    Route::post('/reminders', 'RemindersController@store')->name('reminders.store');
-    Route::delete('/reminders/{reminder}', 'RemindersController@destroy')->name('reminders.destroy');
+Route::middleware('verified')->group(function() {
+    Route::get('/', 'RemindersController@index')->name('reminders.index');
+    Route::post('/', 'RemindersController@store')->name('reminders.store');
+    Route::delete('/{reminder}', 'RemindersController@destroy')->name('reminders.destroy');
 });
-Auth::routes();
-Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes(['verify' => true]);

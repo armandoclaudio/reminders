@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class Reminder extends Model
 {
     protected $guarded = [];
+    protected $dates = ['due_at'];
 }
