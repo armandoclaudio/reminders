@@ -12,6 +12,7 @@
 
                     <form class="w-full p-6" method="POST" action="{{ route('register') }}">
                         @csrf
+                        {!! Recaptcha::field('register') !!}
 
                         <div class="flex flex-wrap mb-6">
                             <label for="name" class="block text-gray-700 text-sm font-bold mb-2">
@@ -63,6 +64,10 @@
                             <input id="password-confirm" type="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="password_confirmation" required>
                         </div>
 
+                        @if ($errors->has('g-recaptcha-response'))
+                            <p class="text-red-500 text-xs italic my-4">{{ $errors->first('g-recaptcha-response') }}</p>
+                        @endif
+
                         <div class="flex flex-wrap">
                             <button type="submit" class="inline-block align-middle text-center select-none border font-bold whitespace-no-wrap py-2 px-4 rounded text-base leading-normal no-underline text-gray-100 bg-blue-500 hover:bg-blue-700">
                                 {{ __('Register') }}
@@ -81,4 +86,8 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('head_scripts')
+    {!! Recaptcha::renderJs() !!}
 @endsection

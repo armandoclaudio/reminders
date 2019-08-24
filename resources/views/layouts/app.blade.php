@@ -11,6 +11,8 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+
+    @yield('head_scripts')
 </head>
 <body class="bg-gray-100 h-screen antialiased leading-none">
     <div id="app">
