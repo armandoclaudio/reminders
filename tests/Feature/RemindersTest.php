@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SendReminders;
+use App\Mail\ReminderMail;
 use App\Reminder;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 
 class RemindersTest extends TestCase
 {
@@ -112,5 +115,16 @@ class RemindersTest extends TestCase
         $this->assertDatabaseHas('reminders', [
             'id' => $reminder->id,
         ]);
+    }
+
+    /** @test */
+    public function an_email_is_sent_when_a_reminder_is_due()
+    {
+        factory('App\Reminder')->create(['due_at' => Carbon::now()->seconds(0)]);
+        Mail::fake();
+
+        SendReminders::dispatch();
+
+        Mail::assertQueued(ReminderMail::class);
     }
 }

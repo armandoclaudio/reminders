@@ -27,7 +27,7 @@ class RemindersController extends Controller
         request()->user()->reminders()->save(
             new Reminder([
                 'title' => $request->title,
-                'due_at' => Carbon::parse($request->date . " " . $request->time),
+                'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
             ])
         );
 
