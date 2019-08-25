@@ -29,8 +29,7 @@ class ReminderMail extends Mailable
      */
     public function build()
     {
-        return $this->from(env('MAIL_FROM'))
-            ->subject(__('New Reminder'))
+        return $this->subject(__('New Reminder'))
             ->markdown('emails.reminders.reminder');
     }
 }
