@@ -43,7 +43,7 @@ class ReminderNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->greeting("Here's your reminder")
+            ->subject("New reminder")
             ->line($this->reminder->title);
     }
 
