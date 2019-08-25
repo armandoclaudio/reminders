@@ -3,13 +3,14 @@
 namespace Tests\Feature;
 
 use App\Jobs\SendReminders;
-use App\Mail\ReminderMail;
+use App\Notifications\ReminderNotification;
 use App\Reminder;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class RemindersTest extends TestCase
 {
@@ -118,13 +119,20 @@ class RemindersTest extends TestCase
     }
 
     /** @test */
-    public function an_email_is_sent_when_a_reminder_is_due()
+    public function a_mail_notification_is_sent_when_a_reminder_is_due()
     {
-        factory('App\Reminder')->create(['due_at' => Carbon::now()->seconds(0)]);
-        Mail::fake();
+        $reminder = factory('App\Reminder')->create(['due_at' => Carbon::now()->seconds(0)]);
+        Notification::fake();
 
         SendReminders::dispatch();
 
-        Mail::assertQueued(ReminderMail::class);
+        Notification::assertSentTo(
+            $reminder->user,
+            ReminderNotification::class,
+            function ($notification, $channels) use ($reminder) {
+                return $notification->reminder->id === $reminder->id
+                    && in_array('mail', $channels);
+            }
+        );
     }
 }
