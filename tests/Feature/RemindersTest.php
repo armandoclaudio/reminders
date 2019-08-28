@@ -42,7 +42,7 @@ class RemindersTest extends TestCase
     }
 
     /** @test */
-    public function reminders_data_is_validated()
+    public function reminders_data_is_validated_when_creating_reminders()
     {
         $this->signIn();
 
@@ -63,6 +63,76 @@ class RemindersTest extends TestCase
 
         $response->assertSessionHasErrors([
             'date', 'time'
+        ]);
+    }
+
+    /** @test */
+    public function a_user_can_edit_reminders()
+    {
+        $this->signIn();
+        $reminder = factory('App\Reminder')->create([
+            'user_id' => $this->user->id,
+            'title' => 'Test title',
+            'due_at' => Carbon::tomorrow()->hour(12),
+        ]);
+
+        $this->patch(route('reminders.update', $reminder->id), [
+            'title' => 'New title',
+            'date' => Carbon::tomorrow()->toDateString(),
+            'time' => '15:00',
+        ]);
+
+        $this->assertDatabaseHas('reminders', [
+            'id' => $reminder->id,
+            'title' => 'New title',
+            'due_at' => Carbon::tomorrow()->hour(15),
+        ]);
+    }
+
+    /** @test */
+    public function reminders_data_is_validated_when_updating_reminders()
+    {
+        $this->signIn();
+        $reminder = factory('App\Reminder')->create([
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->patch(route('reminders.update', $reminder->id), [
+            'title' => '',
+            'date' => '',
+            'time' => '',
+        ]);
+
+        $response->assertSessionHasErrors([
+            'title', 'date', 'time'
+        ]);
+
+        $response = $this->patch(route('reminders.update', $reminder->id), [
+            'date' => 'Invalid Date',
+            'time' => 'Invalid Time',
+        ]);
+
+        $response->assertSessionHasErrors([
+            'date', 'time'
+        ]);
+    }
+
+    /** @test */
+    public function a_user_cannot_update_other_users_reminders()
+    {
+        $this->signIn();
+        $reminder = factory('App\Reminder')->create(['title' => 'The title']);
+
+        $response = $this->patch(route('reminders.update', $reminder->id), [
+            'title' => 'New title',
+            'date' => Carbon::tomorrow()->toDateString(),
+            'time' => '15:00',
+        ]);
+
+        $response->assertStatus(401);
+        $this->assertDatabaseHas('reminders', [
+            'id' => $reminder->id,
+            'title' => 'The title',
         ]);
     }
 
@@ -111,8 +181,9 @@ class RemindersTest extends TestCase
         $this->signIn();
         $reminder = factory('App\Reminder')->create();
 
-        $this->delete(route('reminders.destroy', $reminder->id));
+        $response = $this->delete(route('reminders.destroy', $reminder->id));
 
+        $response->assertStatus(401);
         $this->assertDatabaseHas('reminders', [
             'id' => $reminder->id,
         ]);

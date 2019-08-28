@@ -34,10 +34,28 @@ class RemindersController extends Controller
         return redirect()->back();
     }
 
+    public function update(Request $request, Reminder $reminder)
+    {
+        if($reminder->user_id != request()->user()->id) {
+            return response('Unauthorized', 401);
+        }
+
+        $this->validate($request, [
+            'title' => 'required|string|max:255',
+            'date' => 'required|date_format:Y-m-d',
+            'time' => 'required|date_format:H:i',
+        ]);
+
+        $reminder->update([
+            'title' => $request->title,
+            'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
+        ]);
+    }
+
     public function destroy(Reminder $reminder)
     {
         if($reminder->user_id != request()->user()->id) {
-            return 403;
+            return response('Unauthorized', 401);
         }
 
         $reminder->delete();
