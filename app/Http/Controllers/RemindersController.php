@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RemindersRequest;
 use DB;
 use App\Reminder;
 use Carbon\Carbon;
@@ -16,14 +17,8 @@ class RemindersController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(RemindersRequest $request)
     {
-        $this->validate($request, [
-            'title' => 'required|string|max:255',
-            'date' => 'required|date_format:Y-m-d',
-            'time' => 'required|date_format:H:i',
-        ]);
-
         request()->user()->reminders()->save(
             new Reminder([
                 'title' => $request->title,
@@ -34,32 +29,17 @@ class RemindersController extends Controller
         return redirect()->back();
     }
 
-    public function update(Request $request, Reminder $reminder)
+    public function update(RemindersRequest $request, Reminder $reminder)
     {
-        if($reminder->user_id != request()->user()->id) {
-            return response('Unauthorized', 401);
-        }
-
-        $this->validate($request, [
-            'title' => 'required|string|max:255',
-            'date' => 'required|date_format:Y-m-d',
-            'time' => 'required|date_format:H:i',
-        ]);
-
         $reminder->update([
             'title' => $request->title,
             'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
         ]);
     }
 
-    public function destroy(Reminder $reminder)
+    public function destroy(RemindersRequest $request, Reminder $reminder)
     {
-        if($reminder->user_id != request()->user()->id) {
-            return response('Unauthorized', 401);
-        }
-
         $reminder->delete();
-
         return redirect()->back();
     }
 }

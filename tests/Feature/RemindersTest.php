@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class RemindersTest extends TestCase
@@ -129,7 +128,7 @@ class RemindersTest extends TestCase
             'time' => '15:00',
         ]);
 
-        $response->assertStatus(401);
+        $response->assertStatus(403);
         $this->assertDatabaseHas('reminders', [
             'id' => $reminder->id,
             'title' => 'The title',
@@ -183,7 +182,7 @@ class RemindersTest extends TestCase
 
         $response = $this->delete(route('reminders.destroy', $reminder->id));
 
-        $response->assertStatus(401);
+        $response->assertStatus(403);
         $this->assertDatabaseHas('reminders', [
             'id' => $reminder->id,
         ]);
