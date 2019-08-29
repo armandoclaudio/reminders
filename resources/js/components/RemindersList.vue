@@ -1,8 +1,8 @@
 <template>
     <div v-if="reminders.length > 0" class="container mx-auto px-4 mt-12">
         <h2 class="font-semibold text-sm uppercase tracking-wide">Scheduled Reminders</h2>
-        <div v-for="(date, i) in dates" :key="i" class="mt-6">
-            <div class="font-semibold" v-text="dateFormat(date)"></div>
+        <div v-for="(date, i) in dates" :key="i" class="mt-8">
+            <div class="font-semibold md:mb-2" v-text="dateFormat(date)"></div>
             <div v-for="reminder in dateReminders(date)" :key="reminder.id" class="flex items-baseline md:pl-4 py-2 md:hover:bg-blue-200">
                 <div class="font-mono uppercase tracking-wide text-xs text-blue-700" v-text="timeFormat(reminder.due_at)"></div>
                 <div class="ml-4" v-text="reminder.title"></div>
