@@ -3,7 +3,7 @@
         <div class="flex flex-wrap md:flex-no-wrap justify-end">
             <div class="w-full md:w-1/2">
                 <div class="mb-4 md:mb-0">
-                    <input v-model="title" type="text" class="h-10 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('title')}" placeholder="Title" requiredsss autofocus>
+                    <input v-model="title" type="text" class="h-10 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('title')}" placeholder="Title" required autofocus>
 
                     <p v-if="hasError('title')" class="text-red-500 text-xs italic mt-4">
                         {{ getError('title') }}
@@ -16,7 +16,7 @@
                         Date:
                     </label>
 
-                    <input v-model="date" type="date" class="bg-white h-10 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('date')}" placeholder="Date" requiredsss>
+                    <input v-model="date" type="date" class="bg-white h-10 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('date')}" placeholder="Date" required>
 
                     <p v-if="hasError('date')" class="text-red-500 text-xs italic mt-4">
                         {{ getError('date') }}
@@ -29,7 +29,7 @@
                         Time:
                     </label>
 
-                    <input v-model="time" type="time" class="bg-white h-10 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('time')}" placeholder="Time" requiredsss>
+                    <input v-model="time" type="time" class="bg-white h-10 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('time')}" placeholder="Time" required>
 
                     <p v-if="hasError('time')" class="text-red-500 text-xs italic mt-4">
                         {{ getError('time') }}
