@@ -12,9 +12,10 @@
 */
 
 Route::middleware('verified')->group(function() {
-    Route::get('/', 'RemindersController@index')->name('reminders.index');
-    Route::post('/', 'RemindersController@store')->name('reminders.store');
-    Route::patch('/{reminder}', 'RemindersController@update')->name('reminders.update');
-    Route::delete('/{reminder}', 'RemindersController@destroy')->name('reminders.destroy');
+    Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/reminders', 'RemindersController@index')->name('reminders.index');
+    Route::post('/reminders', 'RemindersController@store')->name('reminders.store');
+    Route::patch('/reminders/{reminder}', 'RemindersController@update')->name('reminders.update');
+    Route::delete('/reminders/{reminder}', 'RemindersController@destroy')->name('reminders.destroy');
 });
 Auth::routes(['verify' => true]);

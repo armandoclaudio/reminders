@@ -136,19 +136,6 @@ class RemindersTest extends TestCase
     }
 
     /** @test */
-    public function reminders_are_sorted_ascending()
-    {
-        $this->signIn();
-        factory('App\Reminder')->create(['user_id' => $this->user->id, 'due_at' => Carbon::tomorrow()->hour(15)]);
-        factory('App\Reminder')->create(['user_id' => $this->user->id, 'due_at' => Carbon::tomorrow()->hour(12)]);
-        factory('App\Reminder')->create(['user_id' => $this->user->id, 'due_at' => Carbon::parse('+2 hours')]);
-
-        $response = $this->get(route('reminders.index'));
-
-        $response->assertViewHas('reminders', Reminder::orderBy('due_at')->get());
-    }
-
-    /** @test */
     public function only_future_reminders_are_shown()
     {
         $this->signIn();

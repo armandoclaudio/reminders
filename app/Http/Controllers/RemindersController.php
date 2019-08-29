@@ -12,21 +12,19 @@ class RemindersController extends Controller
 {
     public function index()
     {
-        return view('reminders.index', [
+        return [
             'reminders' => request()->user()->reminders()->where('due_at', '>=', Carbon::now())->get(),
-        ]);
+        ];
     }
 
     public function store(RemindersRequest $request)
     {
-        request()->user()->reminders()->save(
+        return request()->user()->reminders()->save(
             new Reminder([
                 'title' => $request->title,
                 'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
             ])
         );
-
-        return redirect()->back();
     }
 
     public function update(RemindersRequest $request, Reminder $reminder)
@@ -35,11 +33,16 @@ class RemindersController extends Controller
             'title' => $request->title,
             'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
         ]);
+
+        return $reminder->fresh();
     }
 
     public function destroy(RemindersRequest $request, Reminder $reminder)
     {
         $reminder->delete();
-        return redirect()->back();
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
 }
