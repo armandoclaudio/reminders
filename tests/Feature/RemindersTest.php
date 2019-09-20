@@ -181,7 +181,7 @@ class RemindersTest extends TestCase
         $reminder = factory('App\Reminder')->create(['due_at' => Carbon::now()->seconds(0)]);
         Notification::fake();
 
-        SendReminders::dispatch();
+        $this->artisan('schedule:run');
 
         Notification::assertSentTo(
             $reminder->user,
