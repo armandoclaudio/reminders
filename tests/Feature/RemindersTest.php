@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\SendReminders;
-use App\Notifications\ReminderNotification;
-use App\Reminder;
 use Carbon\Carbon;
 use Tests\TestCase;
+use App\Notifications\ReminderNotification;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -187,8 +185,28 @@ class RemindersTest extends TestCase
             $reminder->user,
             ReminderNotification::class,
             function ($notification, $channels) use ($reminder) {
-                return $notification->reminder->id === $reminder->id
+                return $notification->reminders[0]['title'] === $reminder->title
                     && in_array('mail', $channels);
+            }
+        );
+    }
+
+    /** @test */
+    public function reminders_for_the_same_time_are_grouped_in_a_single_notfication()
+    {
+        $user = factory('App\User')->create();
+        $reminder1 = factory('App\Reminder')->create(['user_id' => $user->id, 'title' => 'This is the first reminder', 'due_at' => Carbon::now()->seconds(0)]);
+        $reminder2 = factory('App\Reminder')->create(['user_id' => $user->id, 'title' => 'This is the second reminder', 'due_at' => Carbon::now()->seconds(0)]);
+        Notification::fake();
+
+        $this->artisan('schedule:run');
+
+        Notification::assertSentTo(
+            $user,
+            ReminderNotification::class,
+            function ($notification) use ($reminder1, $reminder2) {
+                return $notification->reminders[0]['title'] == $reminder1->title
+                    && $notification->reminders[1]['title'] == $reminder2->title;
             }
         );
     }

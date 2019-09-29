@@ -11,16 +11,16 @@ class ReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $reminder;
+    public $reminders;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($reminder)
+    public function __construct($reminders)
     {
-        $this->reminder = $reminder;
+        $this->reminders = $reminders;
     }
 
     /**
@@ -42,9 +42,14 @@ class ReminderNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject("New reminder")
-            ->line($this->reminder->title);
+        $message = (new MailMessage)
+            ->subject("New reminder");
+
+        $this->reminders->each(function($reminder) use ($message) {
+            $message->line($reminder->title);
+        });
+
+        return $message;
     }
 
     /**
