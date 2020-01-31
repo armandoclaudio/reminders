@@ -210,4 +210,76 @@ class RemindersTest extends TestCase
             }
         );
     }
+
+    /** @test */
+    public function reminders_can_be_repeated_every_month()
+    {
+        $reminder = factory('App\Reminder')->create([
+            'due_at' => Carbon::now()->seconds(0),
+            'repeats' => '1 months',
+        ]);
+        Notification::fake();
+
+        $this->artisan('schedule:run');
+
+        $this->assertDatabaseHas('reminders', [
+            'user_id' => $reminder->user_id,
+            'title' => $reminder->title,
+            'due_at' => Carbon::now()->seconds(0)->addMonths(1),
+        ]);
+    }
+
+    /** @test */
+    public function reminders_can_be_repeated_every_2_weeks()
+    {
+        $reminder = factory('App\Reminder')->create([
+            'due_at' => Carbon::now()->seconds(0),
+            'repeats' => '2 weeks',
+        ]);
+        Notification::fake();
+
+        $this->artisan('schedule:run');
+
+        $this->assertDatabaseHas('reminders', [
+            'user_id' => $reminder->user_id,
+            'title' => $reminder->title,
+            'due_at' => Carbon::now()->seconds(0)->addWeeks(2),
+        ]);
+    }
+
+    /** @test */
+    public function reminders_can_be_repeated_every_year()
+    {
+        $reminder = factory('App\Reminder')->create([
+            'due_at' => Carbon::now()->seconds(0),
+            'repeats' => '1 years',
+        ]);
+        Notification::fake();
+
+        $this->artisan('schedule:run');
+
+        $this->assertDatabaseHas('reminders', [
+            'user_id' => $reminder->user_id,
+            'title' => $reminder->title,
+            'due_at' => Carbon::now()->seconds(0)->addYears(1),
+        ]);
+    }
+
+    /** @test */
+    public function reminders_can_be_repeated_every_15_days()
+    {
+        $reminder = factory('App\Reminder')->create([
+            'due_at' => Carbon::now()->seconds(0),
+            'repeats' => '15 days',
+        ]);
+        Notification::fake();
+
+        $this->artisan('schedule:run');
+
+        $this->assertDatabaseHas('reminders', [
+            'user_id' => $reminder->user_id,
+            'title' => $reminder->title,
+            'due_at' => Carbon::now()->seconds(0)->addDays(15),
+        ]);
+    }
 }
