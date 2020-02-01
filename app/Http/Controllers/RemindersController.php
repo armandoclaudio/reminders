@@ -23,6 +23,7 @@ class RemindersController extends Controller
             new Reminder([
                 'title' => $request->title,
                 'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
+                'repeats' => $request->repeats,
             ])
         );
     }
@@ -32,6 +33,7 @@ class RemindersController extends Controller
         $reminder->update([
             'title' => $request->title,
             'due_at' => Carbon::parse($request->date . " " . $request->time)->seconds(0),
+            'repeats' => $request->repeats,
         ]);
 
         return $reminder->fresh();

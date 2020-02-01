@@ -47,6 +47,24 @@
                 </button>
             </div>
         </div>
+        <div class="mt-3 flex items-center">
+            <label class="h-10 flex items-center">
+                <input type="checkbox" v-model="repeats">
+                <div class="ml-2">Repeats</div>
+            </label>
+            <div v-show="repeats == 1" class="ml-4">every</div>
+            <input v-model="repeats_qty" v-show="repeats == 1" type="number" class="ml-4 w-16 h-10 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('qty')}">
+            <select v-model="repeats_type" v-show="repeats == 1" class="ml-4 h-10 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" :class="{'border-red-500' : hasError('qty')}">
+                <option value="">----</option>
+                <option>days</option>
+                <option>weeks</option>
+                <option>months</option>
+                <option>years</option>
+            </select>
+            <p v-if="hasError('repeats')" class="ml-4 text-red-500 text-xs italic mt-4">
+                {{ getError('repeats') }}
+            </p>
+        </div>
     </form>
 </template>
 
@@ -60,6 +78,9 @@
                 title: '',
                 date: '',
                 time: '',
+                repeats: false,
+                repeats_qty: '',
+                repeats_type: '',
                 errors: {},
             }
         },
@@ -74,11 +95,25 @@
                 this.title = reminder.title
                 this.date = dayjs(reminder.due_at).format('YYYY-MM-DD')
                 this.time = dayjs(reminder.due_at).format('HH:mm')
+                if(reminder.repeats != '') {
+                    let repeats = reminder.repeats.split(' ')
+                    this.repeats = true
+                    this.repeats_qty = repeats[0]
+                    this.repeats_type = repeats[1]
+                }
             },
 
             submit() {
+
+                let data = {
+                    title: this.title,
+                    date: this.date,
+                    time: this.time,
+                    repeats: this.repeats ? `${this.repeats_qty} ${this.repeats_type}` : '',
+                }
+
                 if(this.id == null) {
-                    axios.post(this.action, this.$data).then(({ data }) => {
+                    axios.post(this.action, data).then(({ data }) => {
                         Events.$emit('reminders:created', data)
                         this.clear()
                     }).catch(error => {
@@ -88,7 +123,7 @@
                     return
                 }
 
-                axios.patch(`${this.action}/${this.id}`, this.$data).then(({ data }) => {
+                axios.patch(`${this.action}/${this.id}`, data).then(({ data }) => {
                     Events.$emit('reminders:updated', data)
                     this.clear()
                 }).catch(error => {
@@ -101,6 +136,9 @@
                 this.title = ''
                 this.date = ''
                 this.time = ''
+                this.repeats = ''
+                this.repeats_qty = ''
+                this.repeats_type = ''
                 this.errors = {}
             },
 

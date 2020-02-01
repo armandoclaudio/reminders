@@ -26,6 +26,7 @@ class AddRepeatsColumnToRemindersTable extends Migration
     public function down()
     {
         Schema::table('reminders', function (Blueprint $table) {
+            $table->dropColumn('repeats');
         });
     }
 }

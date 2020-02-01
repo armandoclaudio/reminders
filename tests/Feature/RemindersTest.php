@@ -30,11 +30,13 @@ class RemindersTest extends TestCase
             'title' => 'A reminder',
             'date' => Carbon::tomorrow()->toDateString(),
             'time' => '15:00',
+            'repeats' => '2 months',
         ]);
 
         $this->assertDatabaseHas('reminders', [
             'title' => 'A reminder',
             'due_at' => Carbon::tomorrow()->hour(15)->minute(0)->second(0),
+            'repeats' => '2 months',
         ]);
     }
 
@@ -61,6 +63,33 @@ class RemindersTest extends TestCase
         $response->assertSessionHasErrors([
             'date', 'time'
         ]);
+    }
+
+    /** @test */
+    public function reminders_repeats_is_validated()
+    {
+        $this->signIn();
+
+        $response = $this->post(route('reminders.store'), ['repeats' => 'Invalid repeat']);
+        $response->assertSessionHasErrors(['repeats']);
+
+        $response = $this->post(route('reminders.store'), ['repeats' => '1 test']);
+        $response->assertSessionHasErrors(['repeats']);
+
+        $response = $this->post(route('reminders.store'), ['repeats' => '-1 days']);
+        $response->assertSessionHasErrors(['repeats']);
+
+        $response = $this->post(route('reminders.store'), ['repeats' => '3.26 months']);
+        $response->assertSessionHasErrors(['repeats']);
+
+        $response = $this->post(route('reminders.store'), ['repeats' => '']);
+        $response->assertSessionDoesntHaveErrors(['repeats']);
+
+        $reminder = factory('App\Reminder')->create([
+            'user_id' => $this->user->id,
+        ]);
+        $response = $this->post(route('reminders.update', $reminder->id), ['repeats' => '1 week']);
+        $response->assertSessionDoesntHaveErrors(['repeats']);
     }
 
     /** @test */
