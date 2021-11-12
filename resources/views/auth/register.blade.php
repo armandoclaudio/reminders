@@ -69,13 +69,13 @@
                         @endif
 
                         <div class="flex flex-wrap">
-                            <button type="submit" class="inline-block align-middle text-center select-none border font-bold whitespace-no-wrap py-2 px-4 rounded text-base leading-normal no-underline text-gray-100 bg-blue-500 hover:bg-blue-700">
+                            <button type="submit" class="inline-block align-middle text-center select-none border font-bold whitespace-no-wrap py-2 px-4 rounded text-base leading-normal no-underline text-gray-100 bg-sky-600 hover:bg-sky-800">
                                 {{ __('Register') }}
                             </button>
 
                             <p class="w-full text-xs text-center text-gray-700 mt-8 -mb-4">
                                 Already have an account?
-                                <a class="text-blue-500 hover:text-blue-700 no-underline" href="{{ route('login') }}">
+                                <a class="text-sky-500 hover:text-sky-700 no-underline" href="{{ route('login') }}">
                                     Login
                                 </a>
                             </p>

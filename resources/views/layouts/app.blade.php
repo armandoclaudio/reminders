@@ -16,7 +16,7 @@
 </head>
 <body class="bg-gray-100 h-screen antialiased leading-none">
     <div id="app" class="pb-12">
-        <nav class="bg-blue-900 shadow mb-6 py-6">
+        <nav class="bg-sky-900 shadow mb-6 py-6">
             <div class="container mx-auto px-6 md:px-0">
                 <div class="flex items-center justify-center">
                     <div class="ml-6">

@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="w-full sm:w-auto sm:ml-4 text-right flex items-end">
-                <button type="submit" class="h-10 bg-blue-500 hover:bg-blue-700 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <button type="submit" class="h-10 bg-sky-600 hover:bg-sky-800 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     <span v-if="id == null">Create</span>
                     <span v-else>Update</span>
                 </button>
