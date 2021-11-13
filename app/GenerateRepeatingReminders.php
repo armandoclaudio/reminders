@@ -2,8 +2,10 @@
 
 namespace App;
 
-use App\Reminder;
+use App\Models\Reminder;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class GenerateRepeatingReminders
 {

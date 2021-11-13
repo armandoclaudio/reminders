@@ -1,21 +1,16 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RemindersController;
+use Illuminate\Support\Facades\Auth;
 
 Route::middleware('verified')->group(function() {
-    Route::get('/', 'HomeController@index')->name('home');
-    Route::get('/reminders', 'RemindersController@index')->name('reminders.index');
-    Route::post('/reminders', 'RemindersController@store')->name('reminders.store');
-    Route::patch('/reminders/{reminder}', 'RemindersController@update')->name('reminders.update');
-    Route::delete('/reminders/{reminder}', 'RemindersController@destroy')->name('reminders.destroy');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/reminders', [RemindersController::class, 'index'])->name('reminders.index');
+    Route::post('/reminders', [RemindersController::class, 'store'])->name('reminders.store');
+    Route::patch('/reminders/{reminder}', [RemindersController::class, 'update'])->name('reminders.update');
+    Route::delete('/reminders/{reminder}', [RemindersController::class, 'destroy'])->name('reminders.destroy');
 });
+
 Auth::routes(['verify' => true]);

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RemindersRequest;
 use DB;
-use App\Reminder;
+use App\Models\Reminder;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

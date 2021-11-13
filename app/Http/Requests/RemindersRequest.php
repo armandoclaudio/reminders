@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Reminder;
+use App\Models\Reminder;
 use App\Rules\ReminderRepeats;
 use Illuminate\Foundation\Http\FormRequest;
 

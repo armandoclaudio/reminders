@@ -8,6 +8,8 @@ use App\Notifications\ReminderNotification;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use App\Models\User;
+use App\Models\Reminder;
 
 class RemindersTest extends TestCase
 {
@@ -17,7 +19,7 @@ class RemindersTest extends TestCase
     public function a_guest_cannot_create_reminders()
     {
         $this->post(route('reminders.store'),
-            factory('App\Reminder')->make()->toArray()
+            Reminder::factory()->make()->toArray()
         )->assertRedirect();
     }
 
@@ -85,7 +87,7 @@ class RemindersTest extends TestCase
         $response = $this->post(route('reminders.store'), ['repeats' => '']);
         $response->assertSessionDoesntHaveErrors(['repeats']);
 
-        $reminder = factory('App\Reminder')->create([
+        $reminder = Reminder::factory()->create([
             'user_id' => $this->user->id,
         ]);
         $response = $this->post(route('reminders.update', $reminder->id), ['repeats' => '1 week']);
@@ -96,7 +98,7 @@ class RemindersTest extends TestCase
     public function a_user_can_edit_reminders()
     {
         $this->signIn();
-        $reminder = factory('App\Reminder')->create([
+        $reminder = Reminder::factory()->create([
             'user_id' => $this->user->id,
             'title' => 'Test title',
             'due_at' => Carbon::tomorrow()->hour(12),
@@ -119,7 +121,7 @@ class RemindersTest extends TestCase
     public function reminders_data_is_validated_when_updating_reminders()
     {
         $this->signIn();
-        $reminder = factory('App\Reminder')->create([
+        $reminder = Reminder::factory()->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -147,7 +149,7 @@ class RemindersTest extends TestCase
     public function a_user_cannot_update_other_users_reminders()
     {
         $this->signIn();
-        $reminder = factory('App\Reminder')->create(['title' => 'The title']);
+        $reminder = Reminder::factory()->create(['title' => 'The title']);
 
         $response = $this->patch(route('reminders.update', $reminder->id), [
             'title' => 'New title',
@@ -166,8 +168,8 @@ class RemindersTest extends TestCase
     public function only_future_reminders_are_shown()
     {
         $this->signIn();
-        $reminder1 = factory('App\Reminder')->create(['user_id' => $this->user->id, 'due_at' => Carbon::tomorrow()->hour(12)]);
-        $reminder2 = factory('App\Reminder')->create(['user_id' => $this->user->id, 'due_at' => Carbon::yesterday()->hour(15)]);
+        $reminder1 = Reminder::factory()->create(['user_id' => $this->user->id, 'due_at' => Carbon::tomorrow()->hour(12)]);
+        $reminder2 = Reminder::factory()->create(['user_id' => $this->user->id, 'due_at' => Carbon::yesterday()->hour(15)]);
 
         $response = $this->get(route('reminders.index'));
 
@@ -179,7 +181,7 @@ class RemindersTest extends TestCase
     public function a_reminder_can_be_deleted()
     {
         $this->signIn();
-        $reminder = factory('App\Reminder')->create(['user_id' => $this->user->id]);
+        $reminder = Reminder::factory()->create(['user_id' => $this->user->id]);
 
         $this->delete(route('reminders.destroy', $reminder->id));
 
@@ -192,7 +194,7 @@ class RemindersTest extends TestCase
     public function a_user_cannot_delete_other_users_reminders()
     {
         $this->signIn();
-        $reminder = factory('App\Reminder')->create();
+        $reminder = Reminder::factory()->create();
 
         $response = $this->delete(route('reminders.destroy', $reminder->id));
 
@@ -205,7 +207,7 @@ class RemindersTest extends TestCase
     /** @test */
     public function a_mail_notification_is_sent_when_a_reminder_is_due()
     {
-        $reminder = factory('App\Reminder')->create(['due_at' => Carbon::now()->seconds(0)]);
+        $reminder = Reminder::factory()->create(['due_at' => Carbon::now()->seconds(0)]);
         Notification::fake();
 
         $this->artisan('schedule:run');
@@ -223,9 +225,9 @@ class RemindersTest extends TestCase
     /** @test */
     public function reminders_for_the_same_time_are_grouped_in_a_single_notfication()
     {
-        $user = factory('App\User')->create();
-        $reminder1 = factory('App\Reminder')->create(['user_id' => $user->id, 'title' => 'This is the first reminder', 'due_at' => Carbon::now()->seconds(0)]);
-        $reminder2 = factory('App\Reminder')->create(['user_id' => $user->id, 'title' => 'This is the second reminder', 'due_at' => Carbon::now()->seconds(0)]);
+        $user = User::factory()->create();
+        $reminder1 = Reminder::factory()->create(['user_id' => $user->id, 'title' => 'This is the first reminder', 'due_at' => Carbon::now()->seconds(0)]);
+        $reminder2 = Reminder::factory()->create(['user_id' => $user->id, 'title' => 'This is the second reminder', 'due_at' => Carbon::now()->seconds(0)]);
         Notification::fake();
 
         $this->artisan('schedule:run');
@@ -243,7 +245,7 @@ class RemindersTest extends TestCase
     /** @test */
     public function reminders_can_be_repeated_every_month()
     {
-        $reminder = factory('App\Reminder')->create([
+        $reminder = Reminder::factory()->create([
             'due_at' => Carbon::now()->seconds(0),
             'repeats' => '1 months',
         ]);
@@ -261,7 +263,7 @@ class RemindersTest extends TestCase
     /** @test */
     public function reminders_can_be_repeated_every_2_weeks()
     {
-        $reminder = factory('App\Reminder')->create([
+        $reminder = Reminder::factory()->create([
             'due_at' => Carbon::now()->seconds(0),
             'repeats' => '2 weeks',
         ]);
@@ -279,8 +281,10 @@ class RemindersTest extends TestCase
     /** @test */
     public function reminders_can_be_repeated_every_year()
     {
-        $reminder = factory('App\Reminder')->create([
-            'due_at' => Carbon::now()->seconds(0),
+        Carbon::setTestNow('2021-11-13 10:00:00');
+
+        $reminder = Reminder::factory()->create([
+            'due_at' => '2021-11-13 10:00:00',
             'repeats' => '1 years',
         ]);
         Notification::fake();
@@ -290,14 +294,14 @@ class RemindersTest extends TestCase
         $this->assertDatabaseHas('reminders', [
             'user_id' => $reminder->user_id,
             'title' => $reminder->title,
-            'due_at' => Carbon::now()->seconds(0)->addYears(1),
+            'due_at' => '2022-11-13 10:00:00',
         ]);
     }
 
     /** @test */
     public function reminders_can_be_repeated_every_15_days()
     {
-        $reminder = factory('App\Reminder')->create([
+        $reminder = Reminder::factory()->create([
             'due_at' => Carbon::now()->seconds(0),
             'repeats' => '15 days',
         ]);

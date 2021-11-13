@@ -2,8 +2,8 @@
 
 namespace App;
 
-use App\User;
-use App\Reminder;
+use App\Models\User;
+use App\Models\Reminder;
 use Carbon\Carbon;
 use App\Notifications\ReminderNotification;
 
